@@ -2,6 +2,10 @@ import random
 
 from game.settings import W, H, LINE_SCORE
 from game.shapes import SHAPES, KINDS, rotate
+from app_logger import setup_logger
+
+
+logger = setup_logger(__name__)
 
 
 class Game:
@@ -14,6 +18,8 @@ class Game:
         self.game_over = False
         self.next_kind = self._draw_kind()
         self._spawn()
+        
+        logger.info("A new game has started")
 
     def _draw_kind(self):
         # “7-bag”: each figure appears once per cycle.
@@ -30,6 +36,7 @@ class Game:
         self.y = 0
         if self._collides(self.shape, self.x, self.y):
             self.game_over = True
+            logger.info("The game is over. Score: %s", self.score)
 
     @property
     def level(self):
