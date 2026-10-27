@@ -1,5 +1,5 @@
 import curses
-import psycopg
+# import psycopg
 from app_logger import setup_logger
 
 from services.save_repository import (
@@ -13,7 +13,7 @@ def pause_menu(stdscr, game, save_id=None):
     """Displays the pause menu and processes the player’s actions."""
     options = [
         "Продолжить игру",
-        "Сохранить игру",
+        # "Сохранить игру",
         "Выйти без сохранения",
     ]
 
@@ -60,52 +60,52 @@ def pause_menu(stdscr, game, save_id=None):
                 if selected == 0:
                     return "continue", save_id
 
-                # Save the game.
-                elif selected == 1:
-                    name = "Моя партия"
+                # # Save the game.
+                # elif selected == 1:
+                #     name = "Моя партия"
 
-                    if save_id is None:
-                        # New batch: we’re requesting the name.
-                        stdscr.erase()
-                        stdscr.addstr(2, 2, "Название сохранения: ")
-                        stdscr.addstr(3, 2, "> ")
-                        stdscr.refresh()
+                #     if save_id is None:
+                #         # New batch: we’re requesting the name.
+                #         stdscr.erase()
+                #         stdscr.addstr(2, 2, "Название сохранения: ")
+                #         stdscr.addstr(3, 2, "> ")
+                #         stdscr.refresh()
 
-                        curses.curs_set(1)
-                        curses.echo()
+                #         curses.curs_set(1)
+                #         curses.echo()
 
-                        try:
-                            raw_name = stdscr.getstr(
-                                3, 4, 100
-                            )
-                        finally:
-                            curses.noecho()
-                            curses.curs_set(0)
+                #         try:
+                #             raw_name = stdscr.getstr(
+                #                 3, 4, 100
+                #             )
+                #         finally:
+                #             curses.noecho()
+                #             curses.curs_set(0)
 
-                        name = raw_name.decode(
-                            "utf-8", errors="replace"
-                        ).strip() 
+                #         name = raw_name.decode(
+                #             "utf-8", errors="replace"
+                #         ).strip() 
                         
-                        if not name:
-                            name = "Моя партия"
+                #         if not name:
+                #             name = "Моя партия"
 
-                    try:
-                        save_id = save_game(
-                            name,
-                            game.get_state(),
-                            save_id=save_id,
-                        )
-                        message = (
-                            f"Сохранение №{save_id} готово."
-                        )
+                    # try:
+                    #     save_id = save_game(
+                    #         name,
+                    #         game.get_state(),
+                    #         save_id=save_id,
+                    #     )
+                    #     message = (
+                    #         f"Сохранение №{save_id} готово."
+                    #     )
 
-                    except (psycopg.Error, ValueError) as exc:
-                        message = (
-                            f"Не удалось сохранить: {exc}"
-                        )
+                    # except (psycopg.Error, ValueError) as exc:
+                    #     message = (
+                    #         f"Не удалось сохранить: {exc}"
+                    #     )
 
                 # Exit the current game.
-                elif selected == 2:
+                elif selected == 1:
                     return "quit", save_id
 
     finally:

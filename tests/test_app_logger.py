@@ -46,8 +46,8 @@ def test_info_is_written_and_debug_is_filtered(
 
     content = log_file.read_text(encoding="utf-8")
 
-    assert "Сообщение INFO" in content
-    assert "Сообщение DEBUG" not in content
+    assert "Message INFO" in content
+    assert "Messageе DEBUG" not in content
     assert "INFO" in content
     
 def test_repeated_setup_does_not_duplicate_handlers( 
@@ -104,7 +104,7 @@ def test_rotation_creates_archive(
     handler.flush()
     handler.doRollover()
 
-    logger.info("Message prior to rotation")
+    logger.info("Message after rotation")
 
     for current_handler in logger.handlers:
         current_handler.flush()

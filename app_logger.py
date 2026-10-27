@@ -61,38 +61,50 @@ class RetentionTimedRotatingFileHandler(TimedRotatingFileHandler):
 def setup_logger(name: str) -> logging.Logger: 
     """Configures the logger with hourly rotation and a 24‑hour retention period."""
     
-    logger = logging.getLogger(name)
-    logger.setLevel(LOG_LEVEL)
-    logger.propagate = False
+    app_logger = logging.getLogger("tetris")
+    app_logger.setLevel(LOG_LEVEL)
+    app_logger.propagate = False
 
-    if logger.handlers:
-        return logger
+    if not app_logger.handlers:
+        try:
+            LOG_DIR.mkdir(parents=True, exist_ok=True)
+            cleanup_old_archives(LOG_FILE)
 
-    try:
-        LOG_DIR.mkdir(parents=True, exist_ok=True)
+            handler = RetentionTimedRotatingFileHandler(
+                filename=LOG_FILE,
+                when="H",
+                interval=1,
+                backupCount=LOG_RETENTION_HOURS,
+                encoding="utf-8",
+                delay=False,
+            )
+            
+            formatter = logging.Formatter(
+                fmt=LOG_FORMAT,
+                datefmt=DATE_FORMAT,
+            )
+            handler.setFormatter(formatter)
+            app_logger.addHandler(handler)
+        
+        except OSError as exc:
+            raise RuntimeError(
+                f"Не удалось создать или открыть файл логов "
+                f"'{LOG_FILE}': {exc}"
+            ) from exc
 
-        cleanup_old_archives(LOG_FILE)
+    if name == "__main__":
+        logger_name = "tetris.main"
+    elif name.startswith("tetris."):
+        logger_name = name
+    elif name == "tetris":
+        logger_name = "tetris"
+    else:
+        logger_name = f"tetris.{name}"
 
-        handler = RetentionTimedRotatingFileHandler(
-            filename=LOG_FILE,
-            when="H",
-            interval=1,
-            backupCount=LOG_RETENTION_HOURS,
-            encoding="utf-8",
-            delay=False,
-        )
-
-    except OSError as exc:
-        raise RuntimeError(
-            f"Не удалось создать или открыть файл логов "
-            f"'{LOG_FILE}': {exc}"
-        ) from exc
-
-    formatter = logging.Formatter(
-        fmt=LOG_FORMAT,
-        datefmt=DATE_FORMAT,
-    )
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
-
+    logger = logging.getLogger(logger_name)
+    logger.setLevel(LOG_LEVEL) 
+    
+    if logger is not app_logger:
+        logger.propagate = True
+    
     return logger

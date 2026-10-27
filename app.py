@@ -1,5 +1,5 @@
 import curses
-import psycopg
+# import psycopg
 
 from game.engine import Game
 from game.settings import W, H
@@ -37,50 +37,59 @@ def run_app(stdscr):
         game = None
         save_id = None
 
-        try:
-            if choice == "load_save":
-                save_id = select_save_menu(stdscr)
-
-                # The player pressed Esc.
-                if save_id is None:
-                    continue
-
-                saved = get_save(save_id)
-
-                if saved is None:
-                    show_message(
-                        stdscr,
-                        "Сохранение не найдено.",
-                    )
-                    continue
-
-                game = Game.load_state(saved["game_state"])
-
-            elif choice == "continue":
-                saved = get_latest_save()
-
-                if saved is None:
-                    show_message(
-                        stdscr,
-                        "Сохранений пока нет. "
-                        "Сначала начни новую игру.",
-                    )
-                    continue
-
-                save_id = saved["id"]
-                game = Game.load_state(saved["game_state"])
-
-        except (
-            psycopg.Error,
-            ValueError,
-            KeyError,
-            TypeError,
-        ) as exc:
+        # try:
+        if choice == "new_game":
+            game = Game()
+        elif choice in ("load_save", "continue"):
             show_message(
                 stdscr,
-                f"Не удалось загрузить игру: {exc}",
+                "Загрузка сохранений временно отключена.",
             )
             continue
+                
+        #     if choice == "load_save":
+        #         save_id = select_save_menu(stdscr)
+
+        #         # The player pressed Esc.
+        #         if save_id is None:
+        #             continue
+
+        #         saved = get_save(save_id)
+
+        #         if saved is None:
+        #             show_message(
+        #                 stdscr,
+        #                 "Сохранение не найдено.",
+        #             )
+        #             continue
+
+        #         game = Game.load_state(saved["game_state"])
+
+        #     elif choice == "continue":
+        #         saved = get_latest_save()
+
+        #         if saved is None:
+        #             show_message(
+        #                 stdscr,
+        #                 "Сохранений пока нет. "
+        #                 "Сначала начни новую игру.",
+        #             )
+        #             continue
+
+        #         save_id = saved["id"]
+        #         game = Game.load_state(saved["game_state"])
+
+        # except (
+        #     psycopg.Error,
+        #     ValueError,
+        #     KeyError,
+        #     TypeError,
+        # ) as exc:
+        #     show_message(
+        #         stdscr,
+        #         f"Не удалось загрузить игру: {exc}",
+        #     )
+        #     continue
 
 
         while True:

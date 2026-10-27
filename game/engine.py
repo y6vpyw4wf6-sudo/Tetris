@@ -6,6 +6,7 @@ from app_logger import setup_logger
 
 
 logger = setup_logger(__name__)
+logger.info("Проверка записи в файл")
 
 
 class Game:
